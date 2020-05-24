@@ -15,7 +15,8 @@ from DataLoader import DataLoader
 # backend.set_image_dim_ordering('th')
 
 class Trainer:
-	_DATA_FILENAME = 'data.csv'
+	_TRAINDATA_FILENAME = 'trainData.csv'
+	_TESTDATA_FILENAME = 'testData.csv'
 
 	def __init__(self, epochs=10, batch_size=200, shuffle=True, verbose=1):
 		tfback._get_available_gpus = self._get_available_gpus
@@ -24,23 +25,25 @@ class Trainer:
 		self.shuffle = shuffle
 		self.verbose = verbose
 		
-		self.data = self._load_data()
-		self.labels = self.data[['784']]
-		self.data.drop(self.data.columns[[784]], axis = 1, inplace = True)
-
-		#backend.set_image_dim_ordering('th')
-		self.labels = np.array(self.labels)
-		self.categorical = np_utils.to_categorical(self.labels)
-
+		self._prepare_data()
 		self._initialize_model()
 
-	def _load_data(self) -> pd.DataFrame:
-		if not os.path.exists(self._DATA_FILENAME):
-			dataLoader = DataLoader('..\Dataset')
-			return dataLoader.get_training_data(self._DATA_FILENAME)
-		else:
-			return pd.read_csv(self._DATA_FILENAME, index_col = False)
+	def _prepare_data(self):
+		dataLoader = DataLoader('..\Dataset')
 
+		self.train_data = dataLoader.get_training_data(self._TRAINDATA_FILENAME)
+		self.train_labels = self.train_data[['784']]
+		self.train_data.drop(self.train_data.columns[[784]], axis = 1, inplace = True)
+		self.train_labels = np.array(self.train_labels)
+		self.train_categories = np_utils.to_categorical(self.train_labels)
+		
+		self.test_data = dataLoader.get_test_data(self._TESTDATA_FILENAME)
+		self.test_labels = self.test_data[['784']]
+		self.test_data.drop(self.test_data.columns[[784]], axis = 1, inplace = True)
+		self.test_labels = np.array(self.test_labels)
+		self.test_categories = np_utils.to_categorical(self.test_labels)
+
+	# fixes a bug in keras and tf 2.1
 	def _get_available_gpus(self):
 		"""Get a list of available gpu devices (formatted as strings).
 
@@ -55,7 +58,6 @@ class Trainer:
 
 	def _initialize_model(self):
 		self.model = Sequential()
-		#self.model.add(Conv2D(30, (5, 5), input_shape=(1, 28, 28), activation='relu'))
 		self.model.add(Conv2D(30, (3, 3), activation='relu', input_shape=(1,28,28), data_format='channels_first'))
 		self.model.add(MaxPooling2D(pool_size=(2, 2)))
 		self.model.add(Conv2D(15, (3,3), activation='relu'))
@@ -71,10 +73,34 @@ class Trainer:
 	def train(self):
 		l = []
 		
-		for i in range(0, 233913):
-			l.append(np.array(self.data[i:i+1]).reshape(1, 28, 28))
+		for i in range(0, self.train_data.shape[0]):
+			l.append(np.array(self.train_data[i:i+1]).reshape(1, 28, 28))
 
-		self.model.fit(np.array(l), self.categorical, epochs=self.epochs, batch_size=self.batch_size, shuffle=self.shuffle, verbose=self.verbose)
+		self.model.fit(
+			np.array(l), 
+			self.train_categories, 
+			epochs=self.epochs, 
+			batch_size=self.batch_size, 
+			shuffle=self.shuffle, 
+			verbose=self.verbose
+		)
+
+	def evaluate(self):
+		l = []
+
+		for i in range(0, self.test_data.shape[0]):
+			l.append(np.array(self.test_data[i:i+1]).reshape(1, 28, 28))
+
+		print("")
+		print("Evaluating model with test data")
+		loss_value, accuracy_value = self.model.evaluate(
+			np.array(l),
+			self.test_categories,
+			batch_size=self.batch_size,
+			verbose=self.verbose
+		)
+
+		print("Loss value: " + str(loss_value) + "; Accuracy: " + str(accuracy_value))
 
 	def save_model(self, filename):
 		model_json = self.model.to_json()

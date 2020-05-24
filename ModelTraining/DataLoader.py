@@ -7,6 +7,9 @@ from os import listdir
 from os.path import isfile, join
 
 class DataLoader:
+	output_configuration = [['0'], ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12'], ['13'], ['14'], ['15'], ['16'], ['17'], ['18'], ['19'], ['20'], ['21']]
+	input_configuration = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', '+', '-', 'times', 'div', '=', '(', ')']
+
 	def __init__(self, dataset_root):
 		self.dataset_root = dataset_root
 
@@ -38,23 +41,42 @@ class DataLoader:
 				train_data.append(im_resize)
 		return train_data
 
-
-	def get_training_data(self, filename) -> pd.DataFrame:
-		output_configuration = [['0'], ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12'], ['13'], ['14'], ['15'], ['16'], ['17'], ['18'], ['19'], ['20'], ['21']]
-		input_configuration = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', '+', '-', 'times', 'div', '=', '(', ')']
-
-		print("Loading data from: " + input_configuration[0])
-		data = self.load_images_from_folder(input_configuration[0])
+	def get_data(self, path) -> pd.DataFrame:
+		print("Loading data from: " + self.input_configuration[0])
+		folder = self.dataset_root + "\\" + path + "\\" + self.input_configuration[0]
+		data = self.load_images_from_folder(folder)
 		for i in range(0, len(data)):
-			data[i] = np.append(data[i], output_configuration[0])
+			data[i] = np.append(data[i], self.output_configuration[0])
 
-		for i in range(1, len(output_configuration)):
-			print("Loading data from: " + input_configuration[i])
-			temp_data = self.load_images_from_folder(input_configuration[i])
+		for i in range(1, len(self.output_configuration)):
+			print("Loading data from: " + self.input_configuration[i])
+			folder = self.dataset_root + "\\" + path + "\\" + self.input_configuration[i]
+			temp_data = self.load_images_from_folder(folder)
 			for j in range(0, len(temp_data)):
-				temp_data[j] = np.append(temp_data[j], output_configuration[i])
+				temp_data[j] = np.append(temp_data[j], self.output_configuration[i])
 			data = np.concatenate((data, temp_data))
 
 		dataFrame = pd.DataFrame(data, index=None)
-		dataFrame.to_csv(filename, index=False)
 		return dataFrame
+
+
+	def get_test_data(self, filename) -> pd.DataFrame:
+		if not os.path.exists(filename):
+			print(filename + " doesn't exist. Preparing test data from scratch...")
+			dataFrame = self.get_data("Test")		
+			dataFrame.to_csv(filename, index=False)
+			return dataFrame
+		else:
+			print("Loading data from " + filename)
+			return pd.read_csv(filename, index_col = False)
+
+	def get_training_data(self, filename) -> pd.DataFrame:
+		if not os.path.exists(filename):
+			print(filename + " doesn't exist. Preparing train data from scratch...")
+			dataFrame = self.get_data("Train")		
+			dataFrame.to_csv(filename, index=False)
+			return dataFrame
+		else:
+			print("Loading data from " + filename)
+			return pd.read_csv(filename, index_col = False)
+		
