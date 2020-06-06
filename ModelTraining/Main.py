@@ -2,10 +2,10 @@ from Trainer import Trainer
 import tensorflow as tf
 
 if __name__ == "__main__":
-	filename = "model_final"
-	trainer = Trainer()
 	
-	trainer.train()
-	trainer.evaluate()
-
-	trainer.save_model(filename)
+	minAccuracy = 0.95
+	accuracy = 0
+	while accuracy < minAccuracy:
+		trainer = Trainer()
+		trainer.train()
+		accuracy = trainer.evaluate()
