@@ -58,7 +58,8 @@ class Trainer:
 		self.model.add(tf.keras.layers.Dropout(0.2))
 		self.model.add(tf.keras.layers.Flatten())
 		self.model.add(tf.keras.layers.Dense(128, activation='relu'))
-		self.model.add(tf.keras.layers.Dense(50, activation='relu'))
+		self.model.add(tf.keras.layers.Dense(80, activation='relu'))
+		self.model.add(tf.keras.layers.Dense(80, activation='relu'))
 		self.model.add(tf.keras.layers.Dense(22, activation='softmax'))
 
 		self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
