@@ -36,43 +36,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && arePermissionsDenied()) {
-            requestPermissions((String[]) permissions.toArray(), permissionRequestCode);
-            return;
-        }
-
-        if (!isCameraInitialized) {
-
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == permissionRequestCode && grantResults.length > 0) {
-            if (arePermissionsDenied()) {
-                ((ActivityManager) (this.getSystemService(ACTIVITY_SERVICE))).clearApplicationUserData();
-                recreate();
-            }
-            else {
-                onResume();
-            }
-        }
-    }
-
-    private boolean arePermissionsDenied() {
-        for (String permission : permissions) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    // get the camera working and stuff
 }

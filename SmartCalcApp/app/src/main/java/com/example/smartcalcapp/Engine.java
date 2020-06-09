@@ -43,25 +43,23 @@ public class Engine {
         }
 
         StringBuilder equationBuilder = new StringBuilder();
-        // TODO: for every rect:
         for (Rect rectangle : boundingRectangles) {
-            // TODO: get data from rect
+            // get data from rect
             Mat cropped = srcGray.submat(rectangle);
-            // TODO: rescale to 28x28
+            // rescale to 28x28
             Mat resized = new Mat();
             Imgproc.resize(cropped, resized, new Size(28, 28));
-            // TODO: reshape this to 784x1 NDArray using this.reshape(rescaledImage)
+            // reshape this to 784x1 NDArray using this.reshape(rescaledImage)
             INDArray reshaped = reshape(resized);
-            // TODO: predict single character and add ans to return equation
+            // predict single character and add ans to return equation
             String prediction = neuralNetwork.predict(reshaped);
             equationBuilder.append(prediction);
         }
-        // TODO: return equation
         return equationBuilder.toString();
     }
 
     private INDArray reshape(Mat image) {
-        // TODO: fill in values with data from image!!!!
+        // fill in values with data from image
         int [] values = new int[784];
         int [] shape = {784, 1};
 
