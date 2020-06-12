@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             engine = new Engine(getApplicationContext());
         }
-        catch (IOException exception) {
+        catch (Exception exception) {
             Log.e("Failed to create engine", exception.getMessage());
         }
         setContentView(R.layout.activity_main);

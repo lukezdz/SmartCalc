@@ -12,14 +12,13 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Engine {
     private final NeuralNetwork neuralNetwork;
 
-    public Engine(Context context) throws IOException {
+    public Engine(Context context) throws Exception {
         neuralNetwork = new NeuralNetwork(context);
     }
 
