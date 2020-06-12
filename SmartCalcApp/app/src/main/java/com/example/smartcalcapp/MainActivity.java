@@ -1,7 +1,9 @@
 package com.example.smartcalcapp;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.graphics.ImageFormat;
@@ -17,8 +19,8 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
@@ -27,11 +29,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +49,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final List<String> permissions = Arrays.asList(
@@ -52,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isCameraInitialized = false;
     private Camera camera = null;
     private Engine engine = null;
-    DrawRectangle drawRectangle;
+    final int PIC_CROP = 1;
 
     //Check state orientation of output image
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -65,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private Button btnCapture;
     private TextureView textureView;
+    private TextureView textureView2;
+    private ImageView imgView;
 
     private String cameraId;
     private CameraDevice cameraDevice;
@@ -73,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private Size imageDimension;
     private ImageReader imageReader;
 
+    private Uri uri;
+    Intent cropIntent,data;
     private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private boolean mFlashSupported;
@@ -114,12 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
         textureView = (TextureView)findViewById(R.id.textureView);
         //From Java 1.4 , you can use keyword 'assert' to check expression true or false
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-
         btnCapture = (Button)findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 takePicture();
             }
         });
-        
+
     }
 
     private void takePicture() {
@@ -142,8 +150,9 @@ public class MainActivity extends AppCompatActivity {
                         .getOutputSizes(ImageFormat.JPEG);
 
             //Capture image with custom size
-            int width = 640;
-            int height = 480;
+            int width = 250;
+            int height = 100;
+
             if(jpegSizes != null && jpegSizes.length > 0)
             {
                 width = jpegSizes[0].getWidth();
@@ -162,17 +171,29 @@ public class MainActivity extends AppCompatActivity {
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION,ORIENTATIONS.get(rotation));
 
-            file = new File(Environment.getExternalStorageDirectory()+"/"+ UUID.randomUUID().toString()+".jpg");
+            file = new File("/name.jpg");
+
+            int finalWidth = width;
+            int finalHeight = height;
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
-                    Image image = null;
+                   Image image = null;
                     try{
+
                         image = reader.acquireLatestImage();
+
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
+
                         save(bytes);
+
+                        /// No chyba dziala ale glowy nie dam
+                        Rect rectCrop = new Rect(finalWidth /2-125, finalHeight /2 -50, 250, 100);
+                        Mat image_cv = Imgcodecs.imread("/name.jpg");
+                        Mat image_roi = new Mat(image_cv,rectCrop);
+                        Imgcodecs.imwrite("/name.jpg",image_roi);
 
                     }
                     catch (FileNotFoundException e)
@@ -199,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                         if(outputStream != null)
                             outputStream.close();
                     }
+
                 }
             };
 
@@ -241,7 +263,9 @@ public class MainActivity extends AppCompatActivity {
             texture.setDefaultBufferSize(imageDimension.getWidth(),imageDimension.getHeight());
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+
             captureRequestBuilder.addTarget(surface);
+
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
@@ -366,6 +390,31 @@ public class MainActivity extends AppCompatActivity {
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
-
+    private void performCrop(Uri picUri) {
+        try {
+            cropIntent = new Intent("com.android.camera.action.CROP");
+            // indicate image type and Uri
+            cropIntent.setDataAndType(picUri, "image/*");
+            // set crop properties here
+            cropIntent.putExtra("crop", true);
+            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            // indicate output X and Y
+            cropIntent.putExtra("outputX", 128);
+            cropIntent.putExtra("outputY", 128);
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            // start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, PIC_CROP);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            // display an error message
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
 
 }
