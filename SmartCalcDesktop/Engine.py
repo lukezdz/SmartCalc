@@ -91,7 +91,7 @@ class Engine:
 				train_data[i] = train_data[i].reshape(1,1,28,28)
 				result = self.model.predict_classes(train_data[i])
 				ans += self.character_map[result[0]]
-			print(ans)
+			return ans
 
 
 	# def get_equation(self, image) -> str:
