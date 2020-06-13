@@ -7,8 +7,8 @@ from os import listdir
 from os.path import isfile, join
 
 class DataLoader:
-	output_configuration = [['0'], ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12'], ['13'], ['14'], ['15'], ['16'], ['17'], ['18'], ['19'], ['20'], ['21']]
-	input_configuration = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', '+', '-', 'times', 'div', '=', '(', ')']
+	output_configuration = [['0'], ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['10'], ['11'], ['12'], ['13'], ['14'], ['15'], ['16'], ['17'], ['18'], ['19'], ['20']]
+	input_configuration = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', '+', '-', 'times', 'div', '(', ')']
 
 	def __init__(self, dataset_root):
 		self.dataset_root = dataset_root
