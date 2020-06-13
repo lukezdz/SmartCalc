@@ -3,6 +3,10 @@ import keras
 import threading
 from Engine import Engine
 
+engine = Engine()
+engine.get_equation()
+cv2.waitKey()
+
 cv2.namedWindow("SmartCalcDesktop")
 vc = cv2.VideoCapture(0)
 
@@ -25,4 +29,4 @@ while rval:
         processing_thread.start()
 
 vc.release()
-cv2.destroyWindow("preview")
+cv2.destroyWindow("SmartCalcDesktop")
