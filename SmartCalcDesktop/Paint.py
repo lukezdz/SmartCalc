@@ -22,30 +22,30 @@ class Paint(object):
         self.root.winfo_toplevel().title("SmartCalc Desktop")
         self.root.iconbitmap('data/SmartCalcDesktop.ico')
 
-        self.evaluate_button = Button(self.root, text='Evaluate', command=self.evaluate)
-        self.evaluate_button.grid(row=0, column=0)
+        self.evaluate_button = Button(self.root, text='Evaluate', command=self.evaluate,)
+        self.evaluate_button.grid(row=0, column=0, sticky=N+S+E+W)
+        
+        self.clear_button = Button(self.root, text='Clear', command=self.clear)
+        self.clear_button.grid(row=0, column=1, sticky=N+S+E+W)
 
         self.erase_button = Button(self.root, text='Erase', command=self.use_eraser)
-        self.erase_button.grid(row=0, column=1)
-
-        self.clear_button = Button(self.root, text='Clear', command=self.clear)
-        self.clear_button.grid(row=0, column=2)
+        self.erase_button.grid(row=0, column=3, sticky=N+S+E+W)
 
         self.info_button = Button(self.root, text='Info', command=self.info)
-        self.info_button.grid(row=0, column = 4)
+        self.info_button.grid(row=0, column = 9, sticky=N+S+E+W)
 
         self.c = Canvas(self.root, bg='white', width=self.WIDTH, height=self.HEIGHT)
-        self.c.grid(row=1, columnspan=5)
+        self.c.grid(row=1, columnspan=10)
 
         self.can_evaluate = False
         self.evaluate_button.config(state=DISABLED)
 
         self.scrollbar = Scrollbar(self.root)
-        self.scrollbar.grid(row=2, column=4, sticky=N+S+E)
+        self.scrollbar.grid(row=2, column=9, sticky=N+S+E)
         self.output = Text(self.root)
         self.output.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.output.yview)
-        self.output.grid(row=2, columnspan=4)
+        self.output.grid(row=2, columnspan=9)
 
         self.image = PIL.Image.new("RGB", (self.WIDTH, self.HEIGHT), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image)
