@@ -34,20 +34,25 @@ class Paint(object):
 
         self.info_button.grid(row=0, column = 9, sticky=N+S+E+W)
 
+        self.editor_label = Label(self.root, text='Handwritten editor')
+        self.editor_label.grid(row=1, columnspan=10, sticky=W)
 
-        self.c = Canvas(self.root, bg='white', width=self.WIDTH, height=self.HEIGHT)
-        self.c.grid(row=1, columnspan=10)
+        self.c = Canvas(self.root, bg='white', width=self.WIDTH, height=self.HEIGHT, cursor='pencil')
+        self.c.grid(row=2, columnspan=10)
 
         self.can_evaluate = False
         self.evaluate_button.config(state=DISABLED)
 
+        self.output_label = Label(self.root, text='Results')
+        self.output_label.grid(row=3, columnspan=10, sticky=W)
+
         self.scrollbar = Scrollbar(self.root)
-        self.scrollbar.grid(row=2, column=9, sticky=N+S+E)
+        self.scrollbar.grid(row=4, column=9, sticky=N+S+E)
 
         self.output = Text(self.root)
         self.output.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.output.yview)
-        self.output.grid(row=2, columnspan=9)
+        self.output.grid(row=4, columnspan=9, sticky=N+S+E+W)
 
         self.image = PIL.Image.new("RGB", (self.WIDTH, self.HEIGHT), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image)
@@ -77,10 +82,12 @@ class Paint(object):
             self.erase_button.config(relief=RAISED)
             self.eraser_on = False
             self.line_width = self.PEN_SIZE
+            self.c.config(cursor='pencil')
         else:
             self.erase_button.config(relief=SUNKEN)
             self.eraser_on = True
             self.line_width = self.ERASER_SIZE
+            self.c.config(cursor='circle')
 
     def paint(self, event):
         paint_color = 'white' if self.eraser_on else self.color
