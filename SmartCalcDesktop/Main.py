@@ -2,9 +2,11 @@ import cv2
 import keras
 import threading
 from Engine import Engine
+from Calc import Calc
 
 engine = Engine()
-engine.get_equation()
+equation = engine.get_equation()
+
 cv2.waitKey()
 
 # cv2.namedWindow("SmartCalcDesktop")

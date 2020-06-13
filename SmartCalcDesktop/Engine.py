@@ -81,12 +81,22 @@ class Engine:
 						dump_rect.append(rects[i])
 		final_rect = [i for i in rects if i not in dump_rect]
 
+
+			ans = ""
+			for i in range(len(train_data)):
+				train_data[i] = np.array(train_data[i])
+				train_data[i] = train_data[i].reshape(1,1,28,28)
+				result = self.model.predict_classes(train_data[i])
+				ans += self.character_map[result[0]]
+			return ans
+
 		for r in final_rect:
 			x=r[0]
 			y=r[1]
 			w=r[2]
 			h=r[3]
 			im_crop = thresh[y:y+h+10, x:x+w+10]
+
 
 			im_resize = cv2.resize(im_crop, (28, 28))
 			#cv2.imshow('work', im_resize)
