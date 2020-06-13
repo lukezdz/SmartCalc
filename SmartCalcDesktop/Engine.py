@@ -9,7 +9,7 @@ class Engine:
 	def __init__(self):
 		tfback._get_available_gpus = self._get_available_gpus
 		self.testing = False
-		self.model: keras.models.Sequential = keras.models.load_model("model.hdf5")
+		self.model: keras.models.Sequential = keras.models.load_model("data/model.hdf5")
 		self.character_map = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "+", "-", "*", "/", "(", ")"]
 
 	def _get_available_gpus(self):

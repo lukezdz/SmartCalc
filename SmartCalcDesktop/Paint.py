@@ -17,6 +17,9 @@ class Paint(object):
     def __init__(self):
         self.root = Tk()
 
+        self.root.winfo_toplevel().title("SmartCalc Desktop")
+        self.root.iconbitmap('data/SmartCalcDesktop.ico')
+
         self.evaluate_button = Button(self.root, text='Evaluate', command=self.evaluate)
         self.evaluate_button.grid(row=0, column=0)
 
