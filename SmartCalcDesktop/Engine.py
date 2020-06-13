@@ -24,16 +24,12 @@ class Engine:
 			tfback._LOCAL_DEVICES = [x.name for x in devices]
 		return [x for x in tfback._LOCAL_DEVICES if 'device:gpu' in x.lower()]
 
-	def handle_processing(self):
-		image = cv2.imread("test_g.jpg", cv2.IMREAD_GRAYSCALE)
-		equation = self.get_equation(image)
-		print(equation)
 
 	def get_equation(self):
-		img = cv2.imread('test_images/simple.jpg', cv2.IMREAD_GRAYSCALE)
-		cv2.imshow('wo', img)
-		cv2.waitKey()
-		cv2.destroyAllWindows()
+		img = cv2.imread('temp/temp.jpg', cv2.IMREAD_GRAYSCALE)
+		#cv2.imshow('wo', img)
+		#cv2.waitKey()
+		#cv2.destroyAllWindows()
 
 		ans = ""
 		data = self._cut_image(img)
@@ -45,7 +41,7 @@ class Engine:
 			data[i] = data[i].reshape(1,1,28,28)
 			result = self.model.predict_classes(data[i])
 			ans += self.character_map[result[0]]
-		print(ans)
+		return ans
 
 	def _cut_image(self, img):
 		if img is None:
@@ -93,9 +89,9 @@ class Engine:
 			im_crop = thresh[y:y+h+10, x:x+w+10]
 
 			im_resize = cv2.resize(im_crop, (28, 28))
-			cv2.imshow('work', im_resize)
-			cv2.waitKey()
-			cv2.destroyAllWindows()
+			#cv2.imshow('work', im_resize)
+			#cv2.waitKey()
+			#cv2.destroyAllWindows()
 
 			im_resize = np.reshape(im_resize, (1,28,28))
 			result.append(im_resize)
