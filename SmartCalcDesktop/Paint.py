@@ -9,7 +9,6 @@ from Calc import Calc
 
 
 class Paint(object):
-
     PEN_SIZE = 5.0
     ERASER_SIZE = 15.0
     DEFAULT_COLOR = 'black'
@@ -32,7 +31,7 @@ class Paint(object):
         self.clear_button.grid(row=0, column=2)
 
         self.info_button = Button(self.root, text='Info', command=self.info)
-        self.info_button.grid(row=0, column = 4)
+        self.info_button.grid(row=0, column=4)
 
         self.c = Canvas(self.root, bg='white', width=self.WIDTH, height=self.HEIGHT)
         self.c.grid(row=1, columnspan=5)
@@ -41,7 +40,7 @@ class Paint(object):
         self.evaluate_button.config(state=DISABLED)
 
         self.scrollbar = Scrollbar(self.root)
-        self.scrollbar.grid(row=2, column=4, sticky=N+S+E)
+        self.scrollbar.grid(row=2, column=4, sticky=N + S + E)
         self.output = Text(self.root)
         self.output.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.output.yview)
@@ -109,15 +108,35 @@ class Paint(object):
 
         filename = "temp\\temp.jpg"
         self.image.save(filename)
-        #evaluationThread = threading.Thread(target=self.evaluation_handler)
-        #evaluationThread.start()
+        # evaluationThread = threading.Thread(target=self.evaluation_handler)
+        # evaluationThread.start()
         self.evaluation_handler()
+
+    def GetNormalizedEquation(self, equation):
+        i = 0
+        while i <= len(equation) - 1:
+            if equation[i] == "-" and equation[i+1] == "-":
+                equation = equation[:i] + equation[i+1:]
+                equation = equation[:i] + "=" + equation[i+1:]
+                break
+            i += 1
+        return equation
 
     def evaluation_handler(self):
         equation = self.engine.get_equation()
-        # tu wywolaj liczenie rownania
-        solved_equation = equation + "\n" # zmien zeby dawalo z wynikiem, zakoncz \n
-        self.output.insert(END, solved_equation)
+        calculator = Calc(equation)
+        status, result, char = calculator.GetResult()
+
+        if status == "SUCCESS_EVAL":
+            solved_equation = equation + " = " + str(result) + "\n"
+            self.output.insert(END, solved_equation)
+
+        elif status == "SUCCESS_UNKNOWN":
+            solved_equation = "For: " + self.GetNormalizedEquation(equation) + "\n" + char + " = " + str(result) + " \n"
+            self.output.insert(END, solved_equation)
+
+        else:
+            self.output.insert(END, "Incorrect equation!")
 
 
 if __name__ == '__main__':
