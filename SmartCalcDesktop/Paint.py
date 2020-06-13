@@ -1,6 +1,7 @@
 from PIL import ImageTk, Image, ImageDraw
 import PIL
 from tkinter import *
+from tkinter import messagebox
 from tkinter.colorchooser import askcolor
 import threading
 from Engine import Engine
@@ -27,13 +28,16 @@ class Paint(object):
         self.erase_button.grid(row=0, column=1)
 
         self.clear_button = Button(self.root, text='Clear', command=self.clear)
-        self.clear_button.grid(row=0, column=3)
+        self.clear_button.grid(row=0, column=2)
+
+        self.info_button = Button(self.root, text='Info', command=self.info)
+        self.info_button.grid(row=0, column = 4)
 
         self.c = Canvas(self.root, bg='white', width=self.WIDTH, height=self.HEIGHT)
         self.c.grid(row=1, columnspan=5)
 
         self.can_evaluate = False
-        self.evaluate_button.config(relief=SUNKEN)
+        self.evaluate_button.config(state=DISABLED)
 
         self.scrollbar = Scrollbar(self.root)
         self.scrollbar.grid(row=2, column=4, sticky=N+S+E)
@@ -63,7 +67,7 @@ class Paint(object):
         self.engine = Engine()
         self.output.insert(END, "Model successfully loaded!\n")
         self.can_evaluate = True
-        self.evaluate_button.config(relief=RAISED)
+        self.evaluate_button.config(state=NORMAL)
 
     def use_eraser(self):
         if self.eraser_on:
@@ -92,6 +96,11 @@ class Paint(object):
         self.c.delete('all')
         self.image = PIL.Image.new("RGB", (self.WIDTH, self.HEIGHT), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image)
+
+    def info(self):
+        title = "SmartCalc Desktop Info"
+        message = "SmartCalc Desktop can recognize following characters:\n\n\t0 1 2 3 4 5 6 7 8 9 a b c d e + - * / ( )\n\nAfter it recognizes handwritten input, it calculates an answer to your math problem and displays everything in a textbox below.\n\nIn the handwriting editor you can draw and erase (toggle Erase button), clear whole canvas (Clear button) and evaluate what is in the canvas by using Evaluate button"
+        messagebox.showinfo(title, message)
 
     def evaluate(self):
         if not self.can_evaluate:
