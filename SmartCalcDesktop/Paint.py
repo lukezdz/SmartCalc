@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter.colorchooser import askcolor
 import threading
 from Engine import Engine
+from Calc import Calc
 
 
 class Paint(object):
@@ -51,6 +52,7 @@ class Paint(object):
 
         self.setup()
         self.root.after(100, self.init_engine)
+        self.output.insert(END, "Loading neural network model...\n")
         self.root.mainloop()
 
     def setup(self):
@@ -63,7 +65,6 @@ class Paint(object):
         self.c.bind('<ButtonRelease-1>', self.reset)
 
     def init_engine(self):
-        self.output.insert(END, "Loading neural network model...\n")
         self.engine = Engine()
         self.output.insert(END, "Model successfully loaded!\n")
         self.can_evaluate = True

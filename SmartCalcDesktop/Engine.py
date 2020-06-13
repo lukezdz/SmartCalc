@@ -6,9 +6,9 @@ import cv2
 import random as rng
 
 class Engine:
-	def __init__(self):
+	def __init__(self, debug=False):
 		tfback._get_available_gpus = self._get_available_gpus
-		self.testing = False
+		self.debug = debug
 		self.model: keras.models.Sequential = keras.models.load_model("data/model.hdf5")
 		self.character_map = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "+", "-", "*", "/", "(", ")"]
 
@@ -27,9 +27,10 @@ class Engine:
 
 	def get_equation(self):
 		img = cv2.imread('temp/temp.jpg', cv2.IMREAD_GRAYSCALE)
-		#cv2.imshow('wo', img)
-		#cv2.waitKey()
-		#cv2.destroyAllWindows()
+		if self.debug:
+			cv2.imshow('Whole image', img)
+			cv2.waitKey()
+			cv2.destroyAllWindows()
 
 		ans = ""
 		data = self._cut_image(img)
@@ -81,15 +82,6 @@ class Engine:
 						dump_rect.append(rects[i])
 		final_rect = [i for i in rects if i not in dump_rect]
 
-
-			ans = ""
-			for i in range(len(train_data)):
-				train_data[i] = np.array(train_data[i])
-				train_data[i] = train_data[i].reshape(1,1,28,28)
-				result = self.model.predict_classes(train_data[i])
-				ans += self.character_map[result[0]]
-			return ans
-
 		for r in final_rect:
 			x=r[0]
 			y=r[1]
@@ -99,9 +91,10 @@ class Engine:
 
 
 			im_resize = cv2.resize(im_crop, (28, 28))
-			#cv2.imshow('work', im_resize)
-			#cv2.waitKey()
-			#cv2.destroyAllWindows()
+			if self.debug:
+				cv2.imshow('Cut part', im_resize)
+				cv2.waitKey()
+				cv2.destroyAllWindows()
 
 			im_resize = np.reshape(im_resize, (1,28,28))
 			result.append(im_resize)
