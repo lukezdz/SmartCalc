@@ -69,8 +69,11 @@ class Calc:
         return convertedString, i
 
     def GetResult(self):
-        self.Calculate()
-        return self.info, self.result, self.char
+        if len(self.equation) != 0:
+            self.Calculate()
+            return self.info, self.result, self.char, self.equation
+        else:
+            return "ERROR", 0, '0'
 
     def Calculate(self):
 
@@ -86,6 +89,7 @@ class Calc:
                 i -= 1
 
             try:
+                self.equation = newEqu
                 self.result = eval(newEqu)
                 self.info = "SUCCESS_EVAL"
             except ValueError:

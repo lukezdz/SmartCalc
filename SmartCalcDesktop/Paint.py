@@ -128,10 +128,10 @@ class Paint(object):
     def evaluation_handler(self):
         equation = self.engine.get_equation()
         calculator = Calc(equation)
-        status, result, char = calculator.GetResult()
+        status, result, char, newEqu = calculator.GetResult()
 
         if status == "SUCCESS_EVAL":
-            solved_equation = equation + " = " + str(result) + "\n"
+            solved_equation = newEqu + " = " + str(result) + "\n"
             self.output.insert(END, solved_equation)
 
         elif status == "SUCCESS_UNKNOWN":
@@ -139,7 +139,7 @@ class Paint(object):
             self.output.insert(END, solved_equation)
 
         else:
-            self.output.insert(END, "Incorrect equation!")
+            self.output.insert(END, "Incorrect equation! [DEBUG INFO: "+ equation + "] \n")
 
 
 if __name__ == '__main__':
