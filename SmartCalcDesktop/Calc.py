@@ -3,8 +3,10 @@ from sympy import symbols, Eq, solve, sympify
 
 class Calc:
     equation = ""
+
     result = 0
     char = '0'
+    info = ""
 
     def __init__(self, _stringEquation):
         self.equation = _stringEquation
@@ -56,8 +58,8 @@ class Calc:
                     continue
             else:
                 convertedString += self.equation[i]
-
             i += 1
+
         return convertedString
 
     def CollectNumbers(self, i, convertedString):
@@ -66,6 +68,9 @@ class Calc:
             i += 1
         return convertedString, i
 
+    def GetResult(self):
+        self.Calculate()
+        return self.info, self.result, self.char
 
     def Calculate(self):
 
@@ -79,12 +84,30 @@ class Calc:
             while self.equation[i] > '9' or self.equation[i] < '0':
                 newEqu = self.equation[:i]
                 i -= 1
-            self.result = eval(newEqu)
 
+            try:
+                self.result = eval(newEqu)
+                self.info = "SUCCESS_EVAL"
+            except ValueError:
+                self.result = 0
+                self.info = "ERROR"
         else:
             newEqu = self.ConvertToNormalEquation()
-            e = sympify(newEqu)
-            x = symbols(self.char)
 
-            r = solve(e, x)
-            self.result = r[0]
+            try:
+                e = sympify(newEqu)
+                x = symbols(self.char)
+                r = solve(e, x)
+                if len(r) is not 0:
+                    self.result = str(r[0])
+                    self.info = "SUCCESS_UNKNOWN"
+                else:
+                    self.result = 0
+                    self.info = "ERROR"
+            except ValueError:
+                self.result = 0
+                self.info = "ERROR"
+
+
+
+

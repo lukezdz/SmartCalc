@@ -3,10 +3,11 @@ import keras
 import threading
 from Engine import Engine
 from Calc import Calc
+from Paint import Paint
 
 engine = Engine()
 equation = engine.get_equation()
-
+window = Paint()
 cv2.waitKey()
 
 # cv2.namedWindow("SmartCalcDesktop")
