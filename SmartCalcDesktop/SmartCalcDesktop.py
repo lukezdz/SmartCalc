@@ -1,3 +1,4 @@
+import os
 from PIL import ImageTk, Image, ImageDraw
 import PIL
 from tkinter import *
@@ -115,6 +116,8 @@ class SmartCalcDesktop:
     def evaluate(self):
         if not self.can_evaluate:
             return None
+        if not os.path.exists("temp"):
+            os.mkdir("temp")
 
         filename = "temp\\temp.jpg"
         self.image.save(filename)
