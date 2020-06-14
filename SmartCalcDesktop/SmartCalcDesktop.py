@@ -149,6 +149,8 @@ class SmartCalcDesktop:
             self.output.insert(END, solved_equation)
 
         else:
+            if equation == "":
+                equation = "EMPTY"
             self.output.insert(END, "Incorrect equation! [DEBUG INFO: "+ equation + "] \n")
 
 

@@ -73,7 +73,7 @@ class Calc:
             self.Calculate()
             return self.info, self.result, self.char, self.equation
         else:
-            return "ERROR", 0, '0'
+            return "ERROR", 0, '0', ""
 
     def Calculate(self):
 
@@ -84,14 +84,19 @@ class Calc:
         if self.IsSymbolIn() is False:
             i = len(self.equation) - 1
             newEqu = self.equation
-            while self.equation[i] > '9' or self.equation[i] < '0':
+            while i >= 0 and (self.equation[i] > '9' or self.equation[i] < '0'):
                 newEqu = self.equation[:i]
                 i -= 1
 
             try:
-                self.equation = newEqu
-                self.result = eval(newEqu)
-                self.info = "SUCCESS_EVAL"
+
+                if len(newEqu) is not 0:
+                    self.equation = newEqu
+                    self.result = eval(newEqu)
+                    self.info = "SUCCESS_EVAL"
+                else:
+                    self.result = 0
+                    self.info = "ERROR"
             except ValueError:
                 self.result = 0
                 self.info = "ERROR"
