@@ -11,10 +11,4 @@ if __name__ == "__main__":
 		accuracy = trainer.evaluate()
 		if accuracy >= minAccuracy:
 			trainer.save_model_AIO()
-
-
-	# trainer = Trainer()
-	# trainer.train()
-	# accuracy = trainer.evaluate()
-	# trainer.save_model_AIO()
 	

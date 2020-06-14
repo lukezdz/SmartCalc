@@ -48,6 +48,7 @@ class Engine:
 		if img is None:
 			return None
 
+		# initial image preparing
 		img = ~img
 		ret, thresh = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
 		ctrs, ret = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -60,6 +61,8 @@ class Engine:
 			x,y,w,h = cv2.boundingRect(c)
 			rect = [x,y,w,h]
 			rects.append(rect)
+
+		# remove all overlapping rectangles
 		bool_rect = []
 		for r in rects:
 			l = []
@@ -72,6 +75,7 @@ class Engine:
 				if rec == r:
 					l.append(0)
 			bool_rect.append(l)
+
 		dump_rect = []
 		for i in range(0, len(cnt)):
 			for j in range(0, len(cnt)):
@@ -82,15 +86,15 @@ class Engine:
 						dump_rect.append(rects[i])
 		final_rect = [i for i in rects if i not in dump_rect]
 
+		# cut contents of selected rectangles
 		for r in final_rect:
 			x=r[0]
 			y=r[1]
 			w=r[2]
 			h=r[3]
 			im_crop = thresh[y:y+h+10, x:x+w+10]
-
-
 			im_resize = cv2.resize(im_crop, (28, 28))
+			
 			if self.debug:
 				cv2.imshow('Cut part', im_resize)
 				cv2.waitKey()

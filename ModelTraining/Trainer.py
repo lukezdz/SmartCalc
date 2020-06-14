@@ -7,8 +7,6 @@ import tensorflow as tf
 import keras.backend.tensorflow_backend as tfback
 from DataLoader import DataLoader
 
-# backend.set_image_dim_ordering('th')
-
 class Trainer:
 	_TRAINDATA_FILENAME = 'trainData.csv'
 	_TESTDATA_FILENAME = 'testData.csv'
@@ -53,7 +51,6 @@ class Trainer:
 
 	def _initialize_model(self):
 		self.model = keras.models.Sequential()
-		# self.model.add(keras.layers.InputLayer(input_shape=(1, 28, 28)))
 		self.model.add(keras.layers.Conv2D(30, (3, 3), activation='relu', data_format='channels_first', input_shape=(1, 28, 28)))
 		self.model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 		self.model.add(keras.layers.Conv2D(15, (3,3), activation='relu'))
@@ -86,7 +83,7 @@ class Trainer:
 				keras.callbacks.ModelCheckpoint('model.hdf5', save_best_only=True)
 			]
 		)
-		#self.model = keras.models.load_model('model.hdf5')
+		self.model = keras.models.load_model('model.hdf5')
 
 	def evaluate(self):
 		l = []
