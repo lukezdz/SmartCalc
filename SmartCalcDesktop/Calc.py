@@ -52,6 +52,10 @@ class Calc:
                     convertedString += self.equation[i]
                     convertedString, i = self.CollectNumbers(i+1, convertedString)
                     continue
+                elif 'a' <= self.equation[i] <= 'e':
+                    convertedString += "-"
+                    convertedString += self.equation[i]
+                    i = i+1
                 else:
                     convertedString += "-"
                     convertedString, i = self.CollectNumbers(i, convertedString)
